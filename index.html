@@ -3,911 +3,704 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - مدونة عصام للتقنية</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC3ypwqJJNG-wAcD41Iktial-gD5uLf98Y",
-            authDomain: "stlayat-8d137.firebaseapp.com",
-            projectId: "stlayat-8d137",
-            storageBucket: "stlayat-8d137.firebasestorage.app",
-            messagingSenderId: "344591265291",
-            appId: "1:344591265291:web:839deb3aad8a3691db210e",
-            measurementId: "G-B2ZSGQYFW0"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-
-        // جعل المتغيرات متاحة عالمياً
-        window.firebaseApp = app;
-        window.firebaseDB = db;
-        window.firebaseCollection = collection;
-        window.firebaseGetDocs = getDocs;
-        window.firebaseDoc = doc;
-        window.firebaseSetDoc = setDoc;
-        window.firebaseDeleteDoc = deleteDoc;
-        window.firebaseAddDoc = addDoc;
-    </script>
-
+    <title>عصام للتقنية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-light: #6366f1;
-            --secondary: #7c3aed;
-            --accent: #06b6d4;
-            --text: #374151;
-            --text-light: #6b7280;
-            --bg: #fafafa;
-            --card: #ffffff;
-            --header: #ffffff;
-            --border: #e5e7eb;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --radius: 12px;
-            --transition: all 0.3s ease;
-        }
-
-        .dark-mode {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --secondary: #8b5cf6;
-            --accent: #06b6d4;
-            --text: #f3f4f6;
-            --text-light: #d1d5db;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --header: #1e293b;
-            --border: #374151;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.4;
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        .admin-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* الهيدر */
-        .admin-header {
-            background: var(--header);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .admin-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .admin-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-        }
-
-        .admin-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* الأقسام */
-        .admin-section {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        /* شبكة الأزرار في لوحة التحكم */
-        .buttons-grid-admin {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .button-card-admin {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            transition: var(--transition);
-        }
-
-        .button-card-admin:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow);
-        }
-
-        .button-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .button-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .button-icon-preview {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-        }
-
-        .button-details h4 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .button-details span {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .button-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 12px;
-        }
-
-        .action-btn.edit:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .action-btn.delete:hover {
-            background: #ef4444;
-            color: white;
-            border-color: #ef4444;
-        }
-
-        /* النماذج */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--card);
-            color: var(--text);
-            font-size: 14px;
-        }
-
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .submit-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .submit-btn:hover {
-            background: var(--primary-light);
-            transform: translateY(-1px);
-        }
-
-        /* قسم إضافة زر جديد */
-        .add-button-section {
-            background: var(--bg);
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            transition: var(--transition);
-        }
-
-        .add-button-section:hover {
-            border-color: var(--primary);
-        }
-
-        .add-button-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0 auto;
-        }
-
-        /* النوافذ المنبثقة */
-        .modal {
-            display: none;
+        /* شاشة التحميل */
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 0.5s forwards;
+            color: #00ff88;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        .logo-text {
+            font-family: 'El Messiri', cursive;
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ff88, #00ccff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .logo-subtitle {
+            font-size: 1.2rem;
+            color: #888888;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1.5s forwards;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 2s forwards;
+        }
+
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            border-radius: 10px;
+            animation: loading 2.5s ease-in-out 2.5s forwards;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        /* الصفحة الرئيسية */
+        .main-content {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-content.show {
+            display: block;
+            animation: fadeInMain 1s ease-out;
+        }
+
+        /* العنوان في الأعلى مع الرموز */
+        .top-title {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            animation: techGlow 3s ease-in-out infinite;
+            padding: 15px 0;
+        }
+
+        .title-content {
+            display: flex;
             align-items: center;
             justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        .modal-content {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            max-width: 90%;
-            width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
+        .tech-icon {
+            font-size: 2rem;
+            color: #00ff88;
+            animation: iconFloat 3s ease-in-out infinite;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-        }
+        .tech-icon:nth-child(1) { animation-delay: 0s; }
+        .tech-icon:nth-child(2) { animation-delay: 0.5s; }
+        .tech-icon:nth-child(4) { animation-delay: 1s; }
+        .tech-icon:nth-child(5) { animation-delay: 1.5s; }
 
-        .modal-title {
-            font-size: 20px;
+        .main-title {
+            font-family: 'El Messiri', cursive;
+            font-size: 2.2rem;
             font-weight: 700;
-            color: var(--primary);
+            background: linear-gradient(135deg, #00ff88, #00ccff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            margin: 0 10px;
         }
 
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--text-light);
-            transition: var(--transition);
+        .sub-title {
+            font-size: 1rem;
+            color: #cccccc;
+            font-weight: 300;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .close-modal:hover {
-            color: var(--primary);
+        /* خلفية الإلكترونيات المتحركة */
+        .electronics-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        /* تحسينات للشاشات الصغيرة */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
+        /* الدوائر الإلكترونية */
+        .circuit {
+            position: absolute;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 50%;
+            animation: circuitPulse 6s ease-in-out infinite;
+        }
 
-            .admin-header {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-            }
+        .circuit:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+        }
 
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        .circuit:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 70%;
+            left: 80%;
+            animation-delay: -2s;
+        }
 
-            .buttons-grid-admin {
-                grid-template-columns: 1fr;
-            }
+        .circuit:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 30%;
+            left: 85%;
+            animation-delay: -4s;
+        }
 
-            .button-header {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
+        /* الشرائح الإلكترونية */
+        .chip {
+            position: absolute;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            animation: chipFloat 8s ease-in-out infinite;
+        }
 
-            .button-actions {
+        .chip:nth-child(4) {
+            width: 80px;
+            height: 60px;
+            top: 20%;
+            left: 30%;
+            border-radius: 8px;
+        }
+
+        .chip:nth-child(5) {
+            width: 60px;
+            height: 80px;
+            top: 60%;
+            left: 20%;
+            border-radius: 5px;
+            animation-delay: -3s;
+        }
+
+        .chip:nth-child(6) {
+            width: 70px;
+            height: 50px;
+            top: 80%;
+            left: 70%;
+            border-radius: 6px;
+            animation-delay: -6s;
+        }
+
+        /* الأسلاك المتصلة */
+        .wire {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            height: 2px;
+            opacity: 0.1;
+            animation: wireFlow 4s linear infinite;
+        }
+
+        .wire:nth-child(7) {
+            width: 200px;
+            top: 40%;
+            left: 10%;
+            transform: rotate(45deg);
+        }
+
+        .wire:nth-child(8) {
+            width: 150px;
+            top: 60%;
+            left: 60%;
+            transform: rotate(-30deg);
+            animation-delay: -1s;
+        }
+
+        .wire:nth-child(9) {
+            width: 180px;
+            top: 20%;
+            left: 50%;
+            transform: rotate(15deg);
+            animation-delay: -2s;
+        }
+
+        /* النقاط الإلكترونية */
+        .dot {
+            position: absolute;
+            background: #00ff88;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        .dot:nth-child(10) {
+            width: 6px;
+            height: 6px;
+            top: 25%;
+            left: 25%;
+        }
+
+        .dot:nth-child(11) {
+            width: 4px;
+            height: 4px;
+            top: 45%;
+            left: 75%;
+            animation-delay: -0.5s;
+        }
+
+        .dot:nth-child(12) {
+            width: 8px;
+            height: 8px;
+            top: 75%;
+            left: 35%;
+            animation-delay: -1s;
+        }
+
+        .dot:nth-child(13) {
+            width: 5px;
+            height: 5px;
+            top: 55%;
+            left: 55%;
+            animation-delay: -1.5s;
+        }
+
+        /* الموجات الرقمية */
+        .digital-wave {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            height: 3px;
+            opacity: 0.1;
+            animation: digitalFlow 3s linear infinite;
+        }
+
+        .digital-wave:nth-child(14) {
+            width: 300px;
+            top: 35%;
+            left: 0;
+        }
+
+        .digital-wave:nth-child(15) {
+            width: 250px;
+            top: 65%;
+            left: 0;
+            animation-delay: -1s;
+        }
+
+        .digital-wave:nth-child(16) {
+            width: 200px;
+            top: 85%;
+            left: 0;
+            animation-delay: -2s;
+        }
+
+        /* الرموز الإلكترونية الكبيرة */
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 4rem;
+            color: rgba(0, 255, 136, 0.1);
+            animation: floatAround 20s linear infinite;
+            z-index: 2;
+        }
+
+        .floating-icon.headphones { top: 15%; left: 15%; animation-delay: 0s; }
+        .floating-icon.satellite { top: 25%; left: 75%; animation-delay: -5s; }
+        .floating-icon.laptop { top: 65%; left: 25%; animation-delay: -10s; }
+        .floating-icon.phone { top: 75%; left: 65%; animation-delay: -15s; }
+        .floating-icon.tablet { top: 45%; left: 45%; animation-delay: -7s; }
+        .floating-icon.router { top: 35%; left: 25%; animation-delay: -12s; }
+
+        /* الأنيميشنات */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            50% {
+                width: 70%;
+            }
+            100% {
                 width: 100%;
-                justify-content: space-between;
+            }
+        }
+
+        @keyframes fadeInMain {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes techGlow {
+            0%, 100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+            }
+            50% {
+                opacity: 0.7;
+                filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.6));
+            }
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-5px) scale(1.1);
+            }
+        }
+
+        @keyframes floatAround {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(100px, 0) rotate(180deg);
+            }
+            75% {
+                transform: translate(50px, -50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        @keyframes circuitPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.2;
+            }
+        }
+
+        @keyframes chipFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+            75% {
+                transform: translateY(10px) rotate(-2deg);
+            }
+        }
+
+        @keyframes wireFlow {
+            0% {
+                background-position: -200px 0;
+            }
+            100% {
+                background-position: 200px 0;
+            }
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                opacity: 0.1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes digitalFlow {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 2.5rem;
+            }
+            
+            .logo-icon {
+                font-size: 3rem;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+            }
+            
+            .sub-title {
+                font-size: 0.9rem;
+            }
+            
+            .circuit {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            
+            .tech-icon {
+                font-size: 1.5rem;
+            }
+            
+            .title-content {
+                gap: 10px;
+            }
+            
+            .floating-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 1.4rem;
+            }
+            
+            .sub-title {
+                font-size: 0.8rem;
+            }
+            
+            .tech-icon {
+                font-size: 1.2rem;
+            }
+            
+            .title-content {
+                gap: 5px;
+            }
+            
+            .floating-icon {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <!-- هيدر لوحة التحكم -->
-        <header class="admin-header">
-            <h1 class="admin-title">لوحة التحكم - مدونة عصام للتقنية</h1>
-            <div class="admin-controls">
-                <button class="admin-btn" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                    <span>الوضع الليلي</span>
-                </button>
-                <a href="index.html" class="admin-btn">
-                    <i class="fas fa-home"></i>
-                    <span>العودة للرئيسية</span>
-                </a>
-                <button class="admin-btn" id="saveAllBtn">
-                    <i class="fas fa-save"></i>
-                    <span>حفظ في Firebase</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- قسم إدارة الأزرار -->
-        <section class="admin-section">
-            <h2 class="section-title">إدارة الأزرار</h2>
-            
-            <!-- زر إضافة جديد -->
-            <div class="add-button-section">
-                <button class="add-button-btn" id="addButtonBtn">
-                    <i class="fas fa-plus"></i>
-                    <span>إضافة زر جديد</span>
-                </button>
-            </div>
-
-            <!-- شبكة الأزرار -->
-            <div class="buttons-grid-admin" id="buttonsGridAdmin">
-                <!-- سيتم ملؤها ديناميكياً -->
-            </div>
-        </section>
-
-        <!-- قسم إدارة المحتوى -->
-        <section class="admin-section">
-            <h2 class="section-title">إدارة المحتوى</h2>
-            
-            <div class="form-group">
-                <label class="form-label">نص "من نحن" (العربية)</label>
-                <textarea class="form-textarea" id="aboutTextAr" placeholder="أدخل نص صفحة من نحن بالعربية"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">About Us Text (English)</label>
-                <textarea class="form-textarea" id="aboutTextEn" placeholder="Enter About Us text in English"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">نص "سياسة الخصوصية" (العربية)</label>
-                <textarea class="form-textarea" id="privacyTextAr" placeholder="أدخل نص سياسة الخصوصية بالعربية"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Privacy Policy Text (English)</label>
-                <textarea class="form-textarea" id="privacyTextEn" placeholder="Enter Privacy Policy text in English"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">نص "اتصل بنا" (العربية)</label>
-                <textarea class="form-textarea" id="contactTextAr" placeholder="أدخل نص صفحة اتصل بنا بالعربية"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Contact Us Text (English)</label>
-                <textarea class="form-textarea" id="contactTextEn" placeholder="Enter Contact Us text in English"></textarea>
-            </div>
-        </section>
-
-        <!-- قسم إعدادات المسؤول -->
-        <section class="admin-section">
-            <h2 class="section-title">إعدادات المسؤول</h2>
-            
-            <div class="form-group">
-                <label class="form-label">تفعيل وضع المسؤول</label>
-                <div>
-                    <button class="submit-btn" id="enableAdminBtn">تفعيل وضع المسؤول</button>
-                    <button class="admin-btn" id="disableAdminBtn" style="margin-right: 10px;">تعطيل وضع المسؤول</button>
-                </div>
-            </div>
-        </section>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="logo-container">
+            <div class="logo-icon">⚡</div>
+            <h1 class="logo-text">عصام للتقنية</h1>
+            <p class="logo-subtitle">التميز في عالم الإلكترونيات</p>
+        </div>
+        
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
     </div>
 
-    <!-- نافذة إضافة/تعديل زر -->
-    <div class="modal" id="buttonModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="buttonModalTitle">إضافة زر جديد</h3>
-                <button class="close-modal" id="closeButtonModal">&times;</button>
+    <!-- الصفحة الرئيسية -->
+    <div class="main-content" id="mainContent">
+        <!-- العنوان في الأعلى مع الرموز -->
+        <div class="top-title">
+            <div class="title-content">
+                <div class="tech-icon">🎧</div>
+                <div class="tech-icon">🛰️</div>
+                <h1 class="main-title">مدونة عصام للتقنية</h1>
+                <div class="tech-icon">💻</div>
+                <div class="tech-icon">📱</div>
             </div>
-            <form id="buttonForm">
-                <input type="hidden" id="buttonId">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">اسم الزر (العربية)</label>
-                        <input type="text" class="form-input" id="buttonTitleAr" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Button Title (English)</label>
-                        <input type="text" class="form-input" id="buttonTitleEn" required>
-                    </div>
-                </div>
+            <p class="sub-title">أحدث المقالات والتقنيات في عالم الإلكترونيات</p>
+        </div>
 
-                <div class="form-group">
-                    <label class="form-label">الأيقونة</label>
-                    <select class="form-select" id="buttonIcon" required>
-                        <option value="">اختر أيقونة</option>
-                        <option value="fas fa-book">كتاب</option>
-                        <option value="fas fa-box-open">صندوق</option>
-                        <option value="fab fa-amazon">أمازون</option>
-                        <option value="fas fa-search">بحث</option>
-                        <option value="fas fa-recycle">إعادة تدوير</option>
-                        <option value="fas fa-images">صور</option>
-                        <option value="fas fa-music">موسيقى</option>
-                        <option value="fas fa-gamepad">ألعاب</option>
-                        <option value="fas fa-mobile-alt">تطبيقات</option>
-                        <option value="fas fa-satellite">قمر صناعي</option>
-                        <option value="fas fa-laptop">لابتوب</option>
-                        <option value="fas fa-headphones">سماعات</option>
-                        <option value="fas fa-tv">تلفاز</option>
-                        <option value="fas fa-wifi">واي فاي</option>
-                        <option value="fas fa-download">تحميل</option>
-                    </select>
-                </div>
+        <!-- الرموز الإلكترونية الكبيرة العائمة -->
+        <div class="floating-icons">
+            <div class="floating-icon headphones">🎧</div>
+            <div class="floating-icon satellite">🛰️</div>
+            <div class="floating-icon laptop">💻</div>
+            <div class="floating-icon phone">📱</div>
+            <div class="floating-icon tablet">📟</div>
+            <div class="floating-icon router">📡</div>
+        </div>
 
-                <div class="form-group">
-                    <label class="form-label">الرابط</label>
-                    <input type="url" class="form-input" id="buttonUrl" placeholder="https://example.com" required>
-                </div>
-
-                <button type="submit" class="submit-btn" id="saveButtonBtn">حفظ الزر</button>
-            </form>
+        <!-- خلفية الإلكترونيات المتحركة -->
+        <div class="electronics-background">
+            <!-- دوائر إلكترونية -->
+            <div class="circuit"></div>
+            <div class="circuit"></div>
+            <div class="circuit"></div>
+            
+            <!-- شرائح إلكترونية -->
+            <div class="chip"></div>
+            <div class="chip"></div>
+            <div class="chip"></div>
+            
+            <!-- أسلاك متصلة -->
+            <div class="wire"></div>
+            <div class="wire"></div>
+            <div class="wire"></div>
+            
+            <!-- نقاط إلكترونية -->
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            
+            <!-- موجات رقمية -->
+            <div class="digital-wave"></div>
+            <div class="digital-wave"></div>
+            <div class="digital-wave"></div>
         </div>
     </div>
 
     <script>
-        // بيانات التطبيق الافتراضية
-        const defaultData = {
-            buttons: [
-                { id: 1, title: 'شروحات تقنية', icon: 'fas fa-book', url: '#', titleEn: 'Tech Tutorials' },
-                { id: 2, title: 'منتجاتنا', icon: 'fas fa-box-open', url: '#', titleEn: 'Our Products' },
-                { id: 3, title: 'بضاعة أمازون', icon: 'fab fa-amazon', url: '#', titleEn: 'Amazon Products' },
-                { id: 4, title: 'رزناكي', icon: 'fas fa-search', url: '#', titleEn: 'Riznaki' },
-                { id: 5, title: 'منتجات مستخدمة', icon: 'fas fa-recycle', url: '#', titleEn: 'Used Products' },
-                { id: 6, title: 'صور مفيدة', icon: 'fas fa-images', url: '#', titleEn: 'Useful Images' },
-                { id: 7, title: 'أورج شرقي', icon: 'fas fa-music', url: '#', titleEn: 'Oriental Organ' },
-                { id: 8, title: 'ألعاب المكفوفين', icon: 'fas fa-gamepad', url: '#', titleEn: 'Blind Games' },
-                { id: 9, title: 'تطبيقاتنا', icon: 'fas fa-mobile-alt', url: '#', titleEn: 'Our Apps' }
-            ],
-            pages: {
-                about: 'مدونة عصام للتقنية منصة متخصصة في التقنية والأقمار الصناعية. نقدم شروحات تقنية متخصصة، منتجات متنوعة عالية الجودة، وخدمات متكاملة لتلبية احتياجاتكم في عالم التقنية.',
-                privacy: 'نحن ملتزمون بحماية خصوصيتكم وبياناتكم الشخصية. لا نشارك بياناتكم مع أي جهات خارجية، ونستخدم أحدث تقنيات الحماية لحماية معلوماتكم.',
-                contact: 'للتواصل معنا:\nالبريد الإلكتروني: info@essam-tech.com\nالهاتف: +964 123 456 7890\nواتساب: +964 123 456 7890'
-            },
-            pagesEn: {
-                about: 'Essam Tech Blog is a specialized platform in technology and satellites. We provide specialized technical tutorials, diverse high-quality products, and integrated services to meet your needs in the world of technology.',
-                privacy: 'We are committed to protecting your privacy and personal data. We do not share your data with any external parties, and we use the latest protection technologies to safeguard your information.',
-                contact: 'To contact us:\nEmail: info@essam-tech.com\nPhone: +964 123 456 7890\nWhatsApp: +964 123 456 7890'
-            }
-        };
-
-        let appData = { ...defaultData };
-
-        // عناصر DOM
-        const themeToggle = document.getElementById('themeToggle');
-        const saveAllBtn = document.getElementById('saveAllBtn');
-        const addButtonBtn = document.getElementById('addButtonBtn');
-        const buttonsGridAdmin = document.getElementById('buttonsGridAdmin');
-        const buttonModal = document.getElementById('buttonModal');
-        const buttonModalTitle = document.getElementById('buttonModalTitle');
-        const closeButtonModal = document.getElementById('closeButtonModal');
-        const buttonForm = document.getElementById('buttonForm');
-        const enableAdminBtn = document.getElementById('enableAdminBtn');
-        const disableAdminBtn = document.getElementById('disableAdminBtn');
-
-        // عناصر النماذج
-        const aboutTextAr = document.getElementById('aboutTextAr');
-        const aboutTextEn = document.getElementById('aboutTextEn');
-        const privacyTextAr = document.getElementById('privacyTextAr');
-        const privacyTextEn = document.getElementById('privacyTextEn');
-        const contactTextAr = document.getElementById('contactTextAr');
-        const contactTextEn = document.getElementById('contactTextEn');
-
-        // تهيئة لوحة التحكم
-        function initializeAdmin() {
-            loadDataFromFirebase();
-            checkAdminStatus();
-        }
-
-        // تحميل البيانات من Firebase Firestore
-        async function loadDataFromFirebase() {
-            if (window.firebaseDB && window.firebaseCollection && window.firebaseGetDocs) {
-                try {
-                    const buttonsSnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.firebaseDB, 'buttons'));
-                    const pagesSnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.firebaseDB, 'pages'));
-                    
-                    // تحميل الأزرار
-                    const buttons = [];
-                    buttonsSnapshot.forEach((doc) => {
-                        buttons.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    // تحميل الصفحات
-                    const pages = { about: '', privacy: '', contact: '' };
-                    const pagesEn = { about: '', privacy: '', contact: '' };
-                    
-                    pagesSnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        if (data.language === 'ar') {
-                            pages[data.type] = data.content;
-                        } else if (data.language === 'en') {
-                            pagesEn[data.type] = data.content;
-                        }
-                    });
-                    
-                    if (buttons.length > 0) {
-                        appData.buttons = buttons;
-                    }
-                    if (pages.about) {
-                        appData.pages = pages;
-                        appData.pagesEn = pagesEn;
-                    }
-                    
-                    loadButtons();
-                    loadContent();
-                    
-                } catch (error) {
-                    console.log('خطأ في تحميل البيانات من Firebase:', error);
-                    // استخدام البيانات الافتراضية
-                    appData = { ...defaultData };
-                    loadButtons();
-                    loadContent();
-                }
-            } else {
-                // استخدام البيانات الافتراضية إذا لم يكن Firebase جاهزاً
-                setTimeout(() => {
-                    if (window.firebaseDB) {
-                        loadDataFromFirebase();
-                    } else {
-                        appData = { ...defaultData };
-                        loadButtons();
-                        loadContent();
-                    }
-                }, 1000);
-            }
-        }
-
-        // تحميل الأزرار
-        function loadButtons() {
-            buttonsGridAdmin.innerHTML = '';
-            appData.buttons.forEach(button => {
-                const buttonCard = document.createElement('div');
-                buttonCard.className = 'button-card-admin';
-                buttonCard.innerHTML = `
-                    <div class="button-header">
-                        <div class="button-info">
-                            <div class="button-icon-preview">
-                                <i class="${button.icon}"></i>
-                            </div>
-                            <div class="button-details">
-                                <h4>${button.title}</h4>
-                                <span>${button.titleEn}</span>
-                            </div>
-                        </div>
-                        <div class="button-actions">
-                            <button class="action-btn edit" onclick="editButton('${button.id}')">
-                                <i class="fas fa-edit"></i> تعديل
-                            </button>
-                            <button class="action-btn delete" onclick="deleteButton('${button.id}')">
-                                <i class="fas fa-trash"></i> حذف
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">الرابط:</label>
-                        <input type="text" class="form-input" value="${button.url}" readonly>
-                    </div>
-                `;
-                buttonsGridAdmin.appendChild(buttonCard);
-            });
-        }
-
-        // تحميل المحتوى
-        function loadContent() {
-            aboutTextAr.value = appData.pages.about;
-            aboutTextEn.value = appData.pagesEn.about;
-            privacyTextAr.value = appData.pages.privacy;
-            privacyTextEn.value = appData.pagesEn.privacy;
-            contactTextAr.value = appData.pages.contact;
-            contactTextEn.value = appData.pagesEn.contact;
-        }
-
-        // فتح نافذة إضافة زر
-        addButtonBtn.addEventListener('click', function() {
-            buttonModalTitle.textContent = 'إضافة زر جديد';
-            buttonForm.reset();
-            document.getElementById('buttonId').value = '';
-            buttonModal.style.display = 'flex';
-        });
-
-        // إغلاق نافذة الزر
-        closeButtonModal.addEventListener('click', function() {
-            buttonModal.style.display = 'none';
-        });
-
-        // حفظ الزر في Firebase
-        async function saveButtonToFirebase(buttonData) {
-            if (window.firebaseDB && window.firebaseSetDoc && window.firebaseDoc) {
-                try {
-                    if (buttonData.id) {
-                        // تحديث زر موجود
-                        await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'buttons', buttonData.id), buttonData);
-                    } else {
-                        // إضافة زر جديد
-                        const docRef = await window.firebaseAddDoc(window.firebaseCollection(window.firebaseDB, 'buttons'), buttonData);
-                        buttonData.id = docRef.id;
-                    }
-                    return true;
-                } catch (error) {
-                    console.error('خطأ في حفظ الزر:', error);
-                    return false;
-                }
-            }
-            return false;
-        }
-
-        // حفظ الزر
-        buttonForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // الانتقال إلى الصفحة الرئيسية
+        function showMainContent() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContent = document.getElementById('mainContent');
             
-            const buttonId = document.getElementById('buttonId').value;
-            const titleAr = document.getElementById('buttonTitleAr').value;
-            const titleEn = document.getElementById('buttonTitleEn').value;
-            const icon = document.getElementById('buttonIcon').value;
-            const url = document.getElementById('buttonUrl').value;
-
-            const buttonData = {
-                title: titleAr,
-                titleEn: titleEn,
-                icon: icon,
-                url: url
-            };
-
-            if (buttonId) {
-                buttonData.id = buttonId;
-            }
-
-            const success = await saveButtonToFirebase(buttonData);
-            if (success) {
-                alert('تم حفظ الزر بنجاح!');
-                loadDataFromFirebase();
-                buttonModal.style.display = 'none';
-            } else {
-                alert('حدث خطأ في حفظ الزر. يرجى المحاولة مرة أخرى.');
-            }
-        });
-
-        // تعديل زر
-        window.editButton = function(buttonId) {
-            const button = appData.buttons.find(btn => btn.id === buttonId);
-            if (button) {
-                buttonModalTitle.textContent = 'تعديل الزر';
-                document.getElementById('buttonId').value = button.id;
-                document.getElementById('buttonTitleAr').value = button.title;
-                document.getElementById('buttonTitleEn').value = button.titleEn;
-                document.getElementById('buttonIcon').value = button.icon;
-                document.getElementById('buttonUrl').value = button.url;
-                buttonModal.style.display = 'flex';
-            }
-        };
-
-        // حذف زر من Firebase
-        async function deleteButtonFromFirebase(buttonId) {
-            if (window.firebaseDB && window.firebaseDeleteDoc && window.firebaseDoc) {
-                try {
-                    await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDB, 'buttons', buttonId));
-                    return true;
-                } catch (error) {
-                    console.error('خطأ في حذف الزر:', error);
-                    return false;
-                }
-            }
-            return false;
+            // إخفاء شاشة التحميل
+            loadingScreen.classList.add('fade-out');
+            
+            // إظهار المحتوى الرئيسي بعد التأخير
+            setTimeout(() => {
+                mainContent.classList.add('show');
+                loadingScreen.style.display = 'none';
+                
+                // إنشاء عناصر إلكترونية إضافية
+                createElectronicElements();
+            }, 1500);
         }
 
-        // حذف زر
-        window.deleteButton = async function(buttonId) {
-            if (confirm('هل أنت متأكد من حذف هذا الزر؟')) {
-                const success = await deleteButtonFromFirebase(buttonId);
-                if (success) {
-                    alert('تم حذف الزر بنجاح!');
-                    loadDataFromFirebase();
-                } else {
-                    alert('حدث خطأ في حذف الزر. يرجى المحاولة مرة أخرى.');
-                }
+        // إنشاء عناصر إلكترونية إضافية
+        function createElectronicElements() {
+            const background = document.querySelector('.electronics-background');
+            
+            // إضافة نقاط إلكترونية إضافية
+            for (let i = 0; i < 15; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                
+                // حجم عشوائي
+                const size = Math.random() * 6 + 2;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                
+                // موقع عشوائي
+                dot.style.top = `${Math.random() * 100}%`;
+                dot.style.left = `${Math.random() * 100}%`;
+                
+                // تأخير عشوائي للأنيميشن
+                dot.style.animationDelay = `${Math.random() * 2}s`;
+                
+                background.appendChild(dot);
             }
-        };
-
-        // حفظ الصفحات في Firebase
-        async function savePagesToFirebase() {
-            if (window.firebaseDB && window.firebaseSetDoc && window.firebaseDoc) {
-                try {
-                    // حفظ النصوص العربية
-                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'about_ar'), {
-                        type: 'about',
-                        language: 'ar',
-                        content: aboutTextAr.value
-                    });
-                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'privacy_ar'), {
-                        type: 'privacy',
-                        language: 'ar',
-                        content: privacyTextAr.value
-                    });
-                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'contact_ar'), {
-                        type: 'contact',
-                        language: 'ar',
-                        content: contactTextAr.value
-                    });
-
-                    // حفظ النصوص الإنجليزية
-                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'about_en'), {
-                        type: 'about',
-                        language: 'en',
-                        content: aboutTextEn.value
-                    });
-                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'privacy_en'), {
-                        type: 'privacy',
-                        language: 'en',
-                        content: privacyTextEn.value
-                    });
-                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'contact_en'), {
-                        type: 'contact',
-                        language: 'en',
-                        content: contactTextEn.value
-                    });
-
-                    return true;
-                } catch (error) {
-                    console.error('خطأ في حفظ الصفحات:', error);
-                    return false;
-                }
-            }
-            return false;
-        }
-
-        // حفظ كل البيانات
-        saveAllBtn.addEventListener('click', async function() {
-            const success = await savePagesToFirebase();
-            if (success) {
-                alert('تم حفظ جميع البيانات في Firebase بنجاح!');
-            } else {
-                alert('حدث خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.');
-            }
-        });
-
-        // تفعيل وضع المسؤول
-        enableAdminBtn.addEventListener('click', function() {
-            localStorage.setItem('essamTechAdmin', 'true');
-            alert('تم تفعيل وضع المسؤول! سيظهر زر لوحة التحكم في الصفحة الرئيسية.');
-            checkAdminStatus();
-        });
-
-        // تعطيل وضع المسؤول
-        disableAdminBtn.addEventListener('click', function() {
-            localStorage.setItem('essamTechAdmin', 'false');
-            alert('تم تعطيل وضع المسؤول!');
-            checkAdminStatus();
-        });
-
-        // التحقق من حالة المسؤول
-        function checkAdminStatus() {
-            const isAdmin = localStorage.getItem('essamTechAdmin') === 'true';
-            if (isAdmin) {
-                enableAdminBtn.disabled = true;
-                disableAdminBtn.disabled = false;
-            } else {
-                enableAdminBtn.disabled = false;
-                disableAdminBtn.disabled = true;
+            
+            // إضافة أسلاك إضافية
+            for (let i = 0; i < 10; i++) {
+                const wire = document.createElement('div');
+                wire.className = 'wire';
+                
+                // طول وعرض عشوائي
+                const width = Math.random() * 200 + 100;
+                wire.style.width = `${width}px`;
+                
+                // موقع عشوائي
+                wire.style.top = `${Math.random() * 100}%`;
+                wire.style.left = `${Math.random() * 100}%`;
+                
+                // دوران عشوائي
+                const rotation = Math.random() * 360;
+                wire.style.transform = `rotate(${rotation}deg)`;
+                
+                // تأخير عشوائي للأنيميشن
+                wire.style.animationDelay = `${Math.random() * 4}s`;
+                
+                background.appendChild(wire);
             }
         }
 
-        // تبديل الوضع الليلي
-        themeToggle.addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-            themeToggle.innerHTML = document.body.classList.contains('dark-mode') 
-                ? '<i class="fas fa-sun"></i><span>الوضع النهاري</span>' 
-                : '<i class="fas fa-moon"></i><span>الوضع الليلي</span>';
+        // تهيئة الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            // الانتقال التلقائي بعد 4 ثوانٍ
+            setTimeout(showMainContent, 4000);
+            
+            // إمكانية التخطي بالنقر
+            document.getElementById('loadingScreen').addEventListener('click', showMainContent);
         });
-
-        // إغلاق النوافذ عند النقر خارجها
-        window.addEventListener('click', function(e) {
-            if (e.target === buttonModal) {
-                buttonModal.style.display = 'none';
-            }
-        });
-
-        // تهيئة لوحة التحكم عند التحميل
-        document.addEventListener('DOMContentLoaded', initializeAdmin);
     </script>
 </body>
 </html>
