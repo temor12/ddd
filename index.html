@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - مدونة عصام للتقنية</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3ypwqJJNG-wAcD41Iktial-gD5uLf98Y",
+            authDomain: "stlayat-8d137.firebaseapp.com",
+            projectId: "stlayat-8d137",
+            storageBucket: "stlayat-8d137.firebasestorage.app",
+            messagingSenderId: "344591265291",
+            appId: "1:344591265291:web:839deb3aad8a3691db210e",
+            measurementId: "G-B2ZSGQYFW0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // جعل المتغيرات متاحة عالمياً
+        window.firebaseApp = app;
+        window.firebaseDB = db;
+        window.firebaseCollection = collection;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseDoc = doc;
+        window.firebaseSetDoc = setDoc;
+        window.firebaseDeleteDoc = deleteDoc;
+        window.firebaseAddDoc = addDoc;
+    </script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --text: #374151;
+            --text-light: #6b7280;
+            --bg: #fafafa;
+            --card: #ffffff;
+            --header: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --text: #f3f4f6;
+            --text-light: #d1d5db;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --header: #1e293b;
+            --border: #374151;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.4;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* الهيدر */
+        .admin-header {
+            background: var(--header);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .admin-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* الأقسام */
+        .admin-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* شبكة الأزرار في لوحة التحكم */
+        .buttons-grid-admin {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .button-card-admin {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            transition: var(--transition);
+        }
+
+        .button-card-admin:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .button-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .button-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .button-icon-preview {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .button-details h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .button-details span {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .button-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 12px;
+        }
+
+        .action-btn.edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        /* النماذج */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* قسم إضافة زر جديد */
+        .add-button-section {
+            background: var(--bg);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .add-button-section:hover {
+            border-color: var(--primary);
+        }
+
+        .add-button-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+
+        /* النوافذ المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons-grid-admin {
+                grid-template-columns: 1fr;
+            }
+
+            .button-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .button-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- هيدر لوحة التحكم -->
+        <header class="admin-header">
+            <h1 class="admin-title">لوحة التحكم - مدونة عصام للتقنية</h1>
+            <div class="admin-controls">
+                <button class="admin-btn" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                    <span>الوضع الليلي</span>
+                </button>
+                <a href="index.html" class="admin-btn">
+                    <i class="fas fa-home"></i>
+                    <span>العودة للرئيسية</span>
+                </a>
+                <button class="admin-btn" id="saveAllBtn">
+                    <i class="fas fa-save"></i>
+                    <span>حفظ في Firebase</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- قسم إدارة الأزرار -->
+        <section class="admin-section">
+            <h2 class="section-title">إدارة الأزرار</h2>
+            
+            <!-- زر إضافة جديد -->
+            <div class="add-button-section">
+                <button class="add-button-btn" id="addButtonBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>إضافة زر جديد</span>
+                </button>
+            </div>
+
+            <!-- شبكة الأزرار -->
+            <div class="buttons-grid-admin" id="buttonsGridAdmin">
+                <!-- سيتم ملؤها ديناميكياً -->
+            </div>
+        </section>
+
+        <!-- قسم إدارة المحتوى -->
+        <section class="admin-section">
+            <h2 class="section-title">إدارة المحتوى</h2>
+            
+            <div class="form-group">
+                <label class="form-label">نص "من نحن" (العربية)</label>
+                <textarea class="form-textarea" id="aboutTextAr" placeholder="أدخل نص صفحة من نحن بالعربية"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">About Us Text (English)</label>
+                <textarea class="form-textarea" id="aboutTextEn" placeholder="Enter About Us text in English"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">نص "سياسة الخصوصية" (العربية)</label>
+                <textarea class="form-textarea" id="privacyTextAr" placeholder="أدخل نص سياسة الخصوصية بالعربية"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Privacy Policy Text (English)</label>
+                <textarea class="form-textarea" id="privacyTextEn" placeholder="Enter Privacy Policy text in English"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">نص "اتصل بنا" (العربية)</label>
+                <textarea class="form-textarea" id="contactTextAr" placeholder="أدخل نص صفحة اتصل بنا بالعربية"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contact Us Text (English)</label>
+                <textarea class="form-textarea" id="contactTextEn" placeholder="Enter Contact Us text in English"></textarea>
+            </div>
+        </section>
+
+        <!-- قسم إعدادات المسؤول -->
+        <section class="admin-section">
+            <h2 class="section-title">إعدادات المسؤول</h2>
+            
+            <div class="form-group">
+                <label class="form-label">تفعيل وضع المسؤول</label>
+                <div>
+                    <button class="submit-btn" id="enableAdminBtn">تفعيل وضع المسؤول</button>
+                    <button class="admin-btn" id="disableAdminBtn" style="margin-right: 10px;">تعطيل وضع المسؤول</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- نافذة إضافة/تعديل زر -->
+    <div class="modal" id="buttonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="buttonModalTitle">إضافة زر جديد</h3>
+                <button class="close-modal" id="closeButtonModal">&times;</button>
+            </div>
+            <form id="buttonForm">
+                <input type="hidden" id="buttonId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">اسم الزر (العربية)</label>
+                        <input type="text" class="form-input" id="buttonTitleAr" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Button Title (English)</label>
+                        <input type="text" class="form-input" id="buttonTitleEn" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">الأيقونة</label>
+                    <select class="form-select" id="buttonIcon" required>
+                        <option value="">اختر أيقونة</option>
+                        <option value="fas fa-book">كتاب</option>
+                        <option value="fas fa-box-open">صندوق</option>
+                        <option value="fab fa-amazon">أمازون</option>
+                        <option value="fas fa-search">بحث</option>
+                        <option value="fas fa-recycle">إعادة تدوير</option>
+                        <option value="fas fa-images">صور</option>
+                        <option value="fas fa-music">موسيقى</option>
+                        <option value="fas fa-gamepad">ألعاب</option>
+                        <option value="fas fa-mobile-alt">تطبيقات</option>
+                        <option value="fas fa-satellite">قمر صناعي</option>
+                        <option value="fas fa-laptop">لابتوب</option>
+                        <option value="fas fa-headphones">سماعات</option>
+                        <option value="fas fa-tv">تلفاز</option>
+                        <option value="fas fa-wifi">واي فاي</option>
+                        <option value="fas fa-download">تحميل</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">الرابط</label>
+                    <input type="url" class="form-input" id="buttonUrl" placeholder="https://example.com" required>
+                </div>
+
+                <button type="submit" class="submit-btn" id="saveButtonBtn">حفظ الزر</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // بيانات التطبيق الافتراضية
+        const defaultData = {
+            buttons: [
+                { id: 1, title: 'شروحات تقنية', icon: 'fas fa-book', url: '#', titleEn: 'Tech Tutorials' },
+                { id: 2, title: 'منتجاتنا', icon: 'fas fa-box-open', url: '#', titleEn: 'Our Products' },
+                { id: 3, title: 'بضاعة أمازون', icon: 'fab fa-amazon', url: '#', titleEn: 'Amazon Products' },
+                { id: 4, title: 'رزناكي', icon: 'fas fa-search', url: '#', titleEn: 'Riznaki' },
+                { id: 5, title: 'منتجات مستخدمة', icon: 'fas fa-recycle', url: '#', titleEn: 'Used Products' },
+                { id: 6, title: 'صور مفيدة', icon: 'fas fa-images', url: '#', titleEn: 'Useful Images' },
+                { id: 7, title: 'أورج شرقي', icon: 'fas fa-music', url: '#', titleEn: 'Oriental Organ' },
+                { id: 8, title: 'ألعاب المكفوفين', icon: 'fas fa-gamepad', url: '#', titleEn: 'Blind Games' },
+                { id: 9, title: 'تطبيقاتنا', icon: 'fas fa-mobile-alt', url: '#', titleEn: 'Our Apps' }
+            ],
+            pages: {
+                about: 'مدونة عصام للتقنية منصة متخصصة في التقنية والأقمار الصناعية. نقدم شروحات تقنية متخصصة، منتجات متنوعة عالية الجودة، وخدمات متكاملة لتلبية احتياجاتكم في عالم التقنية.',
+                privacy: 'نحن ملتزمون بحماية خصوصيتكم وبياناتكم الشخصية. لا نشارك بياناتكم مع أي جهات خارجية، ونستخدم أحدث تقنيات الحماية لحماية معلوماتكم.',
+                contact: 'للتواصل معنا:\nالبريد الإلكتروني: info@essam-tech.com\nالهاتف: +964 123 456 7890\nواتساب: +964 123 456 7890'
+            },
+            pagesEn: {
+                about: 'Essam Tech Blog is a specialized platform in technology and satellites. We provide specialized technical tutorials, diverse high-quality products, and integrated services to meet your needs in the world of technology.',
+                privacy: 'We are committed to protecting your privacy and personal data. We do not share your data with any external parties, and we use the latest protection technologies to safeguard your information.',
+                contact: 'To contact us:\nEmail: info@essam-tech.com\nPhone: +964 123 456 7890\nWhatsApp: +964 123 456 7890'
+            }
+        };
+
+        let appData = { ...defaultData };
+
+        // عناصر DOM
+        const themeToggle = document.getElementById('themeToggle');
+        const saveAllBtn = document.getElementById('saveAllBtn');
+        const addButtonBtn = document.getElementById('addButtonBtn');
+        const buttonsGridAdmin = document.getElementById('buttonsGridAdmin');
+        const buttonModal = document.getElementById('buttonModal');
+        const buttonModalTitle = document.getElementById('buttonModalTitle');
+        const closeButtonModal = document.getElementById('closeButtonModal');
+        const buttonForm = document.getElementById('buttonForm');
+        const enableAdminBtn = document.getElementById('enableAdminBtn');
+        const disableAdminBtn = document.getElementById('disableAdminBtn');
+
+        // عناصر النماذج
+        const aboutTextAr = document.getElementById('aboutTextAr');
+        const aboutTextEn = document.getElementById('aboutTextEn');
+        const privacyTextAr = document.getElementById('privacyTextAr');
+        const privacyTextEn = document.getElementById('privacyTextEn');
+        const contactTextAr = document.getElementById('contactTextAr');
+        const contactTextEn = document.getElementById('contactTextEn');
+
+        // تهيئة لوحة التحكم
+        function initializeAdmin() {
+            loadDataFromFirebase();
+            checkAdminStatus();
+        }
+
+        // تحميل البيانات من Firebase Firestore
+        async function loadDataFromFirebase() {
+            if (window.firebaseDB && window.firebaseCollection && window.firebaseGetDocs) {
+                try {
+                    const buttonsSnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.firebaseDB, 'buttons'));
+                    const pagesSnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.firebaseDB, 'pages'));
+                    
+                    // تحميل الأزرار
+                    const buttons = [];
+                    buttonsSnapshot.forEach((doc) => {
+                        buttons.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // تحميل الصفحات
+                    const pages = { about: '', privacy: '', contact: '' };
+                    const pagesEn = { about: '', privacy: '', contact: '' };
+                    
+                    pagesSnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.language === 'ar') {
+                            pages[data.type] = data.content;
+                        } else if (data.language === 'en') {
+                            pagesEn[data.type] = data.content;
+                        }
+                    });
+                    
+                    if (buttons.length > 0) {
+                        appData.buttons = buttons;
+                    }
+                    if (pages.about) {
+                        appData.pages = pages;
+                        appData.pagesEn = pagesEn;
+                    }
+                    
+                    loadButtons();
+                    loadContent();
+                    
+                } catch (error) {
+                    console.log('خطأ في تحميل البيانات من Firebase:', error);
+                    // استخدام البيانات الافتراضية
+                    appData = { ...defaultData };
+                    loadButtons();
+                    loadContent();
+                }
+            } else {
+                // استخدام البيانات الافتراضية إذا لم يكن Firebase جاهزاً
+                setTimeout(() => {
+                    if (window.firebaseDB) {
+                        loadDataFromFirebase();
+                    } else {
+                        appData = { ...defaultData };
+                        loadButtons();
+                        loadContent();
+                    }
+                }, 1000);
+            }
+        }
+
+        // تحميل الأزرار
+        function loadButtons() {
+            buttonsGridAdmin.innerHTML = '';
+            appData.buttons.forEach(button => {
+                const buttonCard = document.createElement('div');
+                buttonCard.className = 'button-card-admin';
+                buttonCard.innerHTML = `
+                    <div class="button-header">
+                        <div class="button-info">
+                            <div class="button-icon-preview">
+                                <i class="${button.icon}"></i>
+                            </div>
+                            <div class="button-details">
+                                <h4>${button.title}</h4>
+                                <span>${button.titleEn}</span>
+                            </div>
+                        </div>
+                        <div class="button-actions">
+                            <button class="action-btn edit" onclick="editButton('${button.id}')">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            <button class="action-btn delete" onclick="deleteButton('${button.id}')">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الرابط:</label>
+                        <input type="text" class="form-input" value="${button.url}" readonly>
+                    </div>
+                `;
+                buttonsGridAdmin.appendChild(buttonCard);
+            });
+        }
+
+        // تحميل المحتوى
+        function loadContent() {
+            aboutTextAr.value = appData.pages.about;
+            aboutTextEn.value = appData.pagesEn.about;
+            privacyTextAr.value = appData.pages.privacy;
+            privacyTextEn.value = appData.pagesEn.privacy;
+            contactTextAr.value = appData.pages.contact;
+            contactTextEn.value = appData.pagesEn.contact;
+        }
+
+        // فتح نافذة إضافة زر
+        addButtonBtn.addEventListener('click', function() {
+            buttonModalTitle.textContent = 'إضافة زر جديد';
+            buttonForm.reset();
+            document.getElementById('buttonId').value = '';
+            buttonModal.style.display = 'flex';
+        });
+
+        // إغلاق نافذة الزر
+        closeButtonModal.addEventListener('click', function() {
+            buttonModal.style.display = 'none';
+        });
+
+        // حفظ الزر في Firebase
+        async function saveButtonToFirebase(buttonData) {
+            if (window.firebaseDB && window.firebaseSetDoc && window.firebaseDoc) {
+                try {
+                    if (buttonData.id) {
+                        // تحديث زر موجود
+                        await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'buttons', buttonData.id), buttonData);
+                    } else {
+                        // إضافة زر جديد
+                        const docRef = await window.firebaseAddDoc(window.firebaseCollection(window.firebaseDB, 'buttons'), buttonData);
+                        buttonData.id = docRef.id;
+                    }
+                    return true;
+                } catch (error) {
+                    console.error('خطأ في حفظ الزر:', error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // حفظ الزر
+        buttonForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const buttonId = document.getElementById('buttonId').value;
+            const titleAr = document.getElementById('buttonTitleAr').value;
+            const titleEn = document.getElementById('buttonTitleEn').value;
+            const icon = document.getElementById('buttonIcon').value;
+            const url = document.getElementById('buttonUrl').value;
+
+            const buttonData = {
+                title: titleAr,
+                titleEn: titleEn,
+                icon: icon,
+                url: url
+            };
+
+            if (buttonId) {
+                buttonData.id = buttonId;
+            }
+
+            const success = await saveButtonToFirebase(buttonData);
+            if (success) {
+                alert('تم حفظ الزر بنجاح!');
+                loadDataFromFirebase();
+                buttonModal.style.display = 'none';
+            } else {
+                alert('حدث خطأ في حفظ الزر. يرجى المحاولة مرة أخرى.');
+            }
+        });
+
+        // تعديل زر
+        window.editButton = function(buttonId) {
+            const button = appData.buttons.find(btn => btn.id === buttonId);
+            if (button) {
+                buttonModalTitle.textContent = 'تعديل الزر';
+                document.getElementById('buttonId').value = button.id;
+                document.getElementById('buttonTitleAr').value = button.title;
+                document.getElementById('buttonTitleEn').value = button.titleEn;
+                document.getElementById('buttonIcon').value = button.icon;
+                document.getElementById('buttonUrl').value = button.url;
+                buttonModal.style.display = 'flex';
+            }
+        };
+
+        // حذف زر من Firebase
+        async function deleteButtonFromFirebase(buttonId) {
+            if (window.firebaseDB && window.firebaseDeleteDoc && window.firebaseDoc) {
+                try {
+                    await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDB, 'buttons', buttonId));
+                    return true;
+                } catch (error) {
+                    console.error('خطأ في حذف الزر:', error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // حذف زر
+        window.deleteButton = async function(buttonId) {
+            if (confirm('هل أنت متأكد من حذف هذا الزر؟')) {
+                const success = await deleteButtonFromFirebase(buttonId);
+                if (success) {
+                    alert('تم حذف الزر بنجاح!');
+                    loadDataFromFirebase();
+                } else {
+                    alert('حدث خطأ في حذف الزر. يرجى المحاولة مرة أخرى.');
+                }
+            }
+        };
+
+        // حفظ الصفحات في Firebase
+        async function savePagesToFirebase() {
+            if (window.firebaseDB && window.firebaseSetDoc && window.firebaseDoc) {
+                try {
+                    // حفظ النصوص العربية
+                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'about_ar'), {
+                        type: 'about',
+                        language: 'ar',
+                        content: aboutTextAr.value
+                    });
+                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'privacy_ar'), {
+                        type: 'privacy',
+                        language: 'ar',
+                        content: privacyTextAr.value
+                    });
+                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'contact_ar'), {
+                        type: 'contact',
+                        language: 'ar',
+                        content: contactTextAr.value
+                    });
+
+                    // حفظ النصوص الإنجليزية
+                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'about_en'), {
+                        type: 'about',
+                        language: 'en',
+                        content: aboutTextEn.value
+                    });
+                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'privacy_en'), {
+                        type: 'privacy',
+                        language: 'en',
+                        content: privacyTextEn.value
+                    });
+                    await window.firebaseSetDoc(window.firebaseDoc(window.firebaseDB, 'pages', 'contact_en'), {
+                        type: 'contact',
+                        language: 'en',
+                        content: contactTextEn.value
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error('خطأ في حفظ الصفحات:', error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // حفظ كل البيانات
+        saveAllBtn.addEventListener('click', async function() {
+            const success = await savePagesToFirebase();
+            if (success) {
+                alert('تم حفظ جميع البيانات في Firebase بنجاح!');
+            } else {
+                alert('حدث خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.');
+            }
+        });
+
+        // تفعيل وضع المسؤول
+        enableAdminBtn.addEventListener('click', function() {
+            localStorage.setItem('essamTechAdmin', 'true');
+            alert('تم تفعيل وضع المسؤول! سيظهر زر لوحة التحكم في الصفحة الرئيسية.');
+            checkAdminStatus();
+        });
+
+        // تعطيل وضع المسؤول
+        disableAdminBtn.addEventListener('click', function() {
+            localStorage.setItem('essamTechAdmin', 'false');
+            alert('تم تعطيل وضع المسؤول!');
+            checkAdminStatus();
+        });
+
+        // التحقق من حالة المسؤول
+        function checkAdminStatus() {
+            const isAdmin = localStorage.getItem('essamTechAdmin') === 'true';
+            if (isAdmin) {
+                enableAdminBtn.disabled = true;
+                disableAdminBtn.disabled = false;
+            } else {
+                enableAdminBtn.disabled = false;
+                disableAdminBtn.disabled = true;
+            }
+        }
+
+        // تبديل الوضع الليلي
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            themeToggle.innerHTML = document.body.classList.contains('dark-mode') 
+                ? '<i class="fas fa-sun"></i><span>الوضع النهاري</span>' 
+                : '<i class="fas fa-moon"></i><span>الوضع الليلي</span>';
+        });
+
+        // إغلاق النوافذ عند النقر خارجها
+        window.addEventListener('click', function(e) {
+            if (e.target === buttonModal) {
+                buttonModal.style.display = 'none';
+            }
+        });
+
+        // تهيئة لوحة التحكم عند التحميل
+        document.addEventListener('DOMContentLoaded', initializeAdmin);
+    </script>
+</body>
+</html>
